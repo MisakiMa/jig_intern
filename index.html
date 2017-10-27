@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta http-equiv="content-type" charset="utf-8">
+	<title></title>
+	    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:300,500" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  	<link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+  	<link href="css/geolocation-api.css" rel="stylesheet">
+
+
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+	<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.1/sweetalert2.all.min.js"></script> -->
+
+<!-- Include a polyfill for ES6 Promises (optional) for IE11 and Android browser -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script> -->
+
+
+    <link rel="stylesheet" href="css/style.css">
+
+
+	<style>
+	  .overlayall-sample {
+	      display: none;
+	      width: 100%;
+	      height: 100%;
+	      position: fixed;
+	      overflow: scroll;
+	      top: 0;
+	      left: 0;
+	      z-index: 100;
+	      background: rgba(0,0,0,0.9);
+	  }
+	  .overlayall-sample p{
+	      color: #FFF;
+	      text-align: center;
+	      font-size: 30px;
+	      margin-top: 100px;
+	      line-height: 32px;
+	  }
+	  .overlay-btn-sample p{
+	    background-color: #333;
+	    padding: 15px 20px;
+	    width: 100px;
+	    text-align: center;
+	    color: #FFF;
+	  }
+	</style>
+
+	<script>
+	  $(function() {
+
+	       $(".overlay-btn-sample").click(function() {
+	             $(".overlayall-sample").fadeIn();　/*ふわっと表示*/
+	   		});
+
+
+	   //     $(".overlayall-sample").click(function() {
+	   //           $(".overlayall-sample").fadeOut();　/*ふわっと消える*/
+	   // });
+
+
+
+
+
+
+	  });
+
+	  function show_rosens(){
+
+	  		console.log("bus_rosens = " + bus_rosens);
+
+	   		for (var n = 0; n < bus_rosens.length; n++){
+
+	   			console.log("bus_rosens[n]['name'] = " + bus_rosens[n]['name']);
+	   			console.log("bus_rosens[n]['id'] = " + bus_rosens[n]['id']);
+
+	   			$(".overlayall-sample").append('<p><input type="button" class="btn btn-primary btn-lg btn-block" id="' + bus_rosens[n]['id'] + '" value= "' + bus_rosens[n]['name'] + '"/></p>');
+//bus_rosens
+
+
+	   			$("#" + bus_rosens[n]['id']).click( function() { //alert('生成されたボタンです。');
+	   												// rosen_number = bus_rosens[n]['id'];
+	   												console.log("this id = " + this.id);
+	   												rosen_number = Number(this.id);
+	   												console.log("rosen_number = " + rosen_number);
+	   												// send_deta();
+	   												loadTest();
+	   												// send_deta();
+	   												// result = send_deta();
+	   												// alert("result");
+													$(".overlayall-sample").fadeOut();
+													 } );
+	   		}
+	  }
+
+
+	  function send_deta(){
+
+		    // console.log(result);
+
+		    // return result;
+
+			const request = new XMLHttpRequest();
+			request.open("GET", `http://127.0.0.1:9999/`);
+			request.addEventListener("load", (event) => {
+			    console.log(event.target.status); // => 200
+			    console.log("responseText");
+			    console.log(event.target.responseText); // => "{...}"
+			});
+			request.send();
+
+	  }
+
+
+
+
+	</script>
+
+	<script>
+
+		$(function() {
+		  // ボタンクリックで時刻を更新
+		  $('#btn').click(function(e) {
+		    $(this).text((new Date()).toLocaleString());
+		  });
+		});
+
+		$(function() {
+			 serach_rosen();
+			 // show_rosens();
+			 $(".overlayall-sample").fadeIn();　/*ふわっと表示*/
+		})
+
+		function show_alert_bus(){
+
+			swal("どこから乗るか選択してください", {
+			  buttons: {
+			  	catch: {
+			      text: bus_stop_cordinates[1][1],
+			      value: "catch",
+			    },
+			    defeat: { //一番近いやつを表示する
+			      text: bus_stop_cordinates[0][1],
+			      value: "defeat",
+			    },
+			    cancel: "キャンセル",
+			  },
+			})
+			.then((value) => {
+			  switch (value) {
+			    case "defeat":
+			      busstop_number = bus_stop_cordinates[0][0];
+			      // console.log("defeat : busstop_number" + busstop_number);
+			      bus_stop_id = bus_stop_cordinates[0][4];
+			      console.log("alert busstop_number defeat: " + busstop_number);
+			      swal("success!", {
+				      icon: "success",
+				    });
+			      break;
+
+			    case "catch":
+			      busstop_number = bus_stop_cordinates[1][0];
+			      bus_stop_id = bus_stop_cordinates[1][4];
+			      console.log("alert busstop_number catch: " + busstop_number);
+			      swal("success!", {
+				      icon: "success",
+				    });
+			      break;
+
+			    default:
+			      swal("error", {
+				    icon: "error",
+				  });
+			  }
+			});
+
+
+		}
+
+	</script>
+
+
+	<script type="text/javascript">
+		 // success alert
+  		// swal("完了", "何かの処理が完了しました", "success");
+
+		// swal("Hello world!");
+
+    	var rosen_number = 1; //鯖江南　新横江線
+    	var back_busstop_cordinate = [];
+    	var now_bus_cordinate = [];
+
+    	var bus_stop_cordinates = [];
+
+    	var bus_rosens = [];
+
+    	var bus_stop_time_table = [];
+
+    	var diff_time = 0;
+    	var diff_distance = 0;
+    	var diff_now_time = 0;
+
+    	var busstop_time = 0;
+
+    	var bus_runnning_flag = true;
+    	var bus_stop_flag = true;
+
+		// バス停指定
+		var busstop_number = 13;
+
+		var bus_vector = 2;
+
+		var bus_stop_id = 0;
+		var bus_stop_back_id = 0;
+		var bus_stop_back_id_flag = false;
+		var bus_stop_back_number = 0;
+
+		var bus_stop_table_json = [];
+
+
+
+
+    	function loadTest(){
+    		    // 各フィールドから値を取得してJSONデータを作成
+		    var data = {
+		        rosenid: rosen_number,
+		    };
+		    /*
+				id
+				"114"
+				"めがね会館"
+		    */
+
+		    var result = $.ajax({
+		        type: 'get',
+		        url: 'https://tutujibus.com/busstopLookup.php',
+		        data: data,  // JSONデータ本体
+		        contentType: 'application/json', // リクエストの Content-Type
+        		dataType: 'jsonp',           // レスポンスをJSONとしてパースする
+        		jsonpCallback: 'jsonp_callback',
+		        // async: false,
+		        success: function(json_data) {   // 200 OK時
+		        // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
+		        if (!json_data[0]) {    // サーバが失敗を返した場合
+			            // alert("Transaction error. " + json_data);
+
+			            console.log(json_data.busstop[busstop_number]); //メガネ会館のバス停の座標など　rosenid 3に指定
+			            console.log("bus stop look up");
+			            console.log(json_data);
+			            // メガネ会館は13番目
+			            for (var i = 0; i < json_data.busstop.length; i++) {
+			            	var BePushed = [
+			            	i,
+			            	json_data.busstop[i].name,
+			            	json_data.busstop[i].latitude,
+			            	json_data.busstop[i].longitude,
+			            	json_data.busstop[i].id];
+			            	bus_stop_cordinates.push(BePushed);
+			            }
+
+			            // console.log("bus_stop_cordinates = " + bus_stop_cordinates[13]);
+			            // console.log(" bus_stop_cordinates = " + bus_stop_cordinates);
+
+
+			            // バスの近い順にソート
+			            for(var i = 0; i < bus_stop_cordinates.length; i++){
+			            	for(var j = bus_stop_cordinates.length-1; j>i ; j--){
+			            		if (getDistance(location_lat, location_lng,
+			            			 bus_stop_cordinates[j][2],
+			            			 bus_stop_cordinates[j][3]) < getDistance(location_lat, location_lng,
+			            			 bus_stop_cordinates[j-1][2],
+			            			 bus_stop_cordinates[j-1][3])){
+			            			var tmp = bus_stop_cordinates[j];
+			            			bus_stop_cordinates[j] = bus_stop_cordinates[j-1];
+			            			bus_stop_cordinates[j-1] = tmp;
+			            		}
+			            	}
+			            }
+
+			            // console.log("ソートされた : " + bus_stop_cordinates);
+
+			            // console.log("one busstop id  : " + bus_stop_cordinates[0]);
+
+			            show_alert_bus();
+
+			            serach_zikoku()
+
+			            console.log("自分の位置情報 lat : " + location_lat + " lng : " + location_lng);
+			            bus_stop_table_json = json_data.busstop;
+
+
+
+
+
+						for (var i = 0; i < bus_stop_table_json.length; i++) {
+
+			            	if (bus_stop_table_json[i].id == bus_stop_back_id){
+			            			bus_stop_back_number = i;
+			            			// break;
+			            		}
+			            }
+
+			            // console.log("debug用 バス停座標 lat : " + json_data.busstop[bus_stop_back_number].latitude + " lon : " + json_data.busstop[bus_stop_back_number].longitude);
+
+			            // 　この場合　メガネ会館の2個前のバス停の座標を表示している
+			            console.log("バス停座標 lat : " + bus_stop_table_json[bus_stop_back_number].latitude + " lon : " + bus_stop_table_json[bus_stop_back_number].longitude);
+
+			            back_busstop_cordinate.shift();
+			            back_busstop_cordinate.shift();
+
+			            //このバスストップじゃない？
+			            back_busstop_cordinate.push(bus_stop_table_json[bus_stop_back_number].latitude);
+			            back_busstop_cordinate.push(bus_stop_table_json[bus_stop_back_number].longitude);
+
+			            console.log("back busstop cordinate : " + back_busstop_cordinate);
+
+
+
+
+			            // serach_zikoku(json_data.busstop[busstop_number - 1].latitude, json_data.busstop[busstop_number - 1].longitude);
+			            // serach_zikoku();
+			            setSerach();
+			            return;
+			        }
+
+
+			        		            // 成功時処理
+		            // location.reload();
+		        },
+		        error: function() {         // HTTPエラー時
+		            alert("Server Error. Pleasy try again later. 1");
+		        }
+		    }).responseText;
+		    console.log(result);
+
+		    return result;
+		}
+
+		function setSerach()
+		{
+			serach_zikoku()
+		   	load = setInterval("serach_zikoku()",5000);
+		   	load2 = setInterval("serach_back_bus_spot()",5000);
+
+		}
+
+		function stopSerach()
+		{
+		    clearInterval(load);
+		}
+
+
+
+		function serach_back_bus_spot(){
+			for (var i = 0; i < bus_stop_table_json.length; i++) {
+
+			    if (bus_stop_table_json[i].id == bus_stop_back_id){
+			        bus_stop_back_number = i;
+			        // break;
+			     }
+			}
+
+			// console.log("debug用 バス停座標 lat : " + json_data.busstop[bus_stop_back_number].latitude + " lon : " + json_data.busstop[bus_stop_back_number].longitude);
+
+			// 　この場合　メガネ会館の2個前のバス停の座標を表示している
+			console.log("バス停座標 lat : " + bus_stop_table_json[bus_stop_back_number].latitude + " lon : " + bus_stop_table_json[bus_stop_back_number].longitude);
+
+			back_busstop_cordinate.shift();
+			back_busstop_cordinate.shift();
+
+			//このバスストップじゃない？
+			back_busstop_cordinate.push(bus_stop_table_json[bus_stop_back_number].latitude);
+			back_busstop_cordinate.push(bus_stop_table_json[bus_stop_back_number].longitude);
+
+			console.log("back busstop cordinate : " + back_busstop_cordinate);
+		}
+
+
+
+		function serach_zikoku(){
+			//時刻データを取得して変数jikanに格納する
+			var jikan= new Date();
+
+			// document.write(jikan + "\n");
+			//時・分・秒を取得する
+			//年
+			var year = jikan.getFullYear();
+
+			//月
+			//1月が0、12月が11。そのため+1をする。
+			var month = jikan.getMonth();
+
+			//日
+			var date = jikan.getDate();
+
+			var busStopTime = "00:00:00";
+
+			var hour = jikan.getHours();
+			var minute = jikan.getMinutes();
+			var second = jikan.getSeconds();
+
+
+
+			// document.write(hour+"時",+minute+"分"+second+"秒");
+
+			var data = {
+		        rosenid: rosen_number,
+		    };
+
+		    var result = $.ajax({
+		        type: 'get',
+		        url: 'https://tutujibus.com/timetableLookup.php',
+		        data: data,  // JSONデータ本体
+		        contentType: 'application/json', // リクエストの Content-Type
+        		dataType: 'jsonp',           // レスポンスをJSONとしてパースする
+        		jsonpCallback: 'jsonp_callback',
+		        // async: false,
+		        success: function(json_data) {   // 200 OK時
+		        // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
+		        if (!json_data[0]) {    // サーバが失敗を返した場合
+			            console.log(json_data);
+			            console.log("time table length " + json_data.timetable.length);
+
+			            for (var i = 0; i < json_data.timetable.length; i++) {
+			            	// 13はbus stop id
+			            	console.log("busstop_number : " + busstop_number);
+			            	console.log("debug time table : ");
+			            	console.log(json_data.timetable[i].list[busstop_number]);
+
+			            	for (var f = 0; f < json_data.timetable[i].list.length; f++){
+			            		if (json_data.timetable[i].list[f].busstopid == bus_stop_id){
+			            			busStopTime = json_data.timetable[i].list[f].time;
+			            			busstop_number = f;
+
+			            			bus_stop_back_id = json_data.timetable[i].list[f-2].busstopid;
+			            			console.log("bus_stop_back_id = " + bus_stop_back_id);
+
+			            			// break;
+			            		}
+
+			            	}
+
+			            	// console.log("time table list " + json_data.timetable[i].list[busstop_number].time);
+							// var busStopTime = json_data.timetable[i].list[busstop_number].time;
+							kekka = busStopTime.split(":");
+				            var dateAndHour  = new Date(year, month, date, kekka[0], kekka[1]);
+				            // 日付と時刻を指定し、オブジェクトを生成する
+
+							if(jikan.getTime() < dateAndHour.getTime()){
+								//普段は <
+								console.log("true");
+								console.log("i = " + i);
+								var bin = json_data.timetable[i].binid;
+								console.log("binid = " + bin);
+								var arr = serach_bus(bin);
+
+
+								var distance = getDistance(
+									back_busstop_cordinate[0], back_busstop_cordinate[1],
+									now_bus_cordinate[0], now_bus_cordinate[1]);
+
+
+
+								// var distance = getDistance(35.680985,139.766994,34.701903,135.494964);//引数 lat lon lat lon
+
+								console.log("get distance : " + distance);
+								console.log("bus_runnning_flag : " + bus_runnning_flag);
+
+
+								console.log("bucBusStopTime : " + json_data.timetable[i].list[busstop_number-2].time);
+
+								/*
+								get distance : 0.10298774959314062
+								get distance : 0.055940332248246155
+								get distance : 0.02090506782060383
+								get distance : 0.003186378155865406
+								*/
+
+								if (bus_runnning_flag && bus_stop_flag && distance < 0.03){
+									var busBackStopTime = json_data.timetable[i].list[busstop_number-2].time;
+									back_kekka = busBackStopTime.split(":");
+						            var dateAndHour_back  = new Date(year, month, date, back_kekka[0], back_kekka[1]);
+
+						            console.log("dateAndHour_back = " + dateAndHour_back);
+									diff_time = jikan.getTime() - dateAndHour_back.getTime();
+									console.log("範囲内に入った diff_time : " + diff_time);
+									// bus_stop_flag = false;
+								}
+
+								busstop_time = dateAndHour.getTime();
+								var diff = dateAndHour.getTime() - jikan.getTime() + diff_time;
+
+
+								console.log("dateAndHour.getTime() = " + dateAndHour.getHours());
+								console.log("jikan.getTime() = " + jikan.getHours())
+								console.log("")
+								var second = diff/1000;
+								//分
+								var minute = diff/(1000*60);
+
+								//時
+								var hour = diff/(1000*60*60);
+
+								//日
+								var day = diff/(1000*60*60*24);
+
+								//年
+								var day = diff/(1000*60*60*24*365);
+
+								console.log("diff = " + second);
+								diff_now_time = second;
+
+								// document.write("<br>");
+								// document.write("残り時間 " + diff_now_time);
+								// show_test();
+
+								break;
+							}else{
+								if (i == (json_data.timetable.length - 1)){
+									// alert("今日はもうこのバス停にはバスは来ません");
+									// debug用
+									// serach_bus(4);
+								}
+							}
+			            }
+
+			            return;
+			        }else{
+			        	alert("Transaction error. ");
+			        }
+		        },
+		        error: function() {         // HTTPエラー時
+		            // alert("Server Error. Pleasy try again later 2.");
+		            console.log("Server Error. Pleasy try again later 2.");
+		        }
+		    }).responseText;
+
+		}
+
+
+
+		function serach_bus(bin_number){
+		    console.log("bin_number = " + bin_number);
+		    var data = {
+		    	rosenid: rosen_number, //rosen_number
+		        binid: bin_number //bin_number
+		    };
+
+		    var result = $.ajax({
+		        type: 'get',
+		        url: 'https://tutujibus.com/rosenLookup.php',
+		        data: data,  // JSONデータ本体
+		        contentType: 'application/json', // リクエストの Content-Type
+        		dataType: 'jsonp',           // レスポンスをJSONとしてパースする
+        		jsonpCallback: 'jsonp_callback',
+		        // async: false,
+		        success: function(json_data) {   // 200 OK時
+		        // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
+		        if (!json_data[0]) {    // サーバが失敗を返した場合
+			            // alert("Transaction error. " + json_data);
+
+			            // 現在指定した路線のバスが走っているかいないかの判定
+			            if (json_data.latitude != null){
+			            	console.log("バスのjsonデータ ");
+			            	console.log(json_data);
+			            	bus_runnning_flag = true;
+
+			            	console.log("行き先 : " + json_data.destination);
+
+							// var bus_stop_cordinates_one = Array.prototype.concat.apply([],bus_stop_cordinates);
+
+							// console.log("bus_stop_cordinates_one : " + bus_stop_cordinates_one);
+							// re = new RegExp(json_data.destination);
+							// if (bus_stop_cordinates_one[1].match(re)) {
+							//     // alert("reを含んでいます。");
+							//     bus_vector = -2;
+							//     console.log("2個前のバス停の座標を取ってくる");
+							// }else{
+							// 	bus_vector = -2;
+							// 	console.log("2個前のバス停の座標を取ってくる");
+							// }
+
+			            	//現在のバスの座標
+			            	console.log("lat = " + json_data.latitude + " log = " + json_data.longitude);
+			            	now_bus_cordinate.shift();
+			            	now_bus_cordinate.shift();
+			            	now_bus_cordinate.push(json_data.latitude);
+			            	now_bus_cordinate.push(json_data.longitude);
+
+			            	// show_test();
+			            	// return　(json_data.latitude, json_data.longitude);
+			        	}else{
+			        		console.log("serach is null");
+			        		bus_runnning_flag = false;
+			        		// return  null;
+			        	}
+
+			        }else{
+			        	alert("Transaction error. ");
+			        }
+
+
+			        		            // 成功時処理
+		            // location.reload();
+		        },
+		        error: function() {         // HTTPエラー時
+		            alert("Server Error. Pleasy try again later 4.");
+		        }
+		    }).responseText;
+		    // console.log(result);
+
+		    return result;
+
+
+		}
+
+		function serach_rosen(){
+
+
+		    var result = $.ajax({
+		        type: 'get',
+		        url: 'https://tutujibus.com/rosenidLookup.php',
+		        contentType: 'application/json', // リクエストの Content-Type
+        		dataType: 'jsonp',           // レスポンスをJSONとしてパースする
+        		jsonpCallback: 'jsonp_callback',
+		        // async: false,
+		        success: function(json_data) {   // 200 OK時
+		        // JSON Arrayの先頭が成功フラグ、失敗の場合2番目がエラーメッセージ
+		        if (!json_data[0]) {    // サーバが失敗を返した場合
+
+			            console.log("バスのjsonデータ ");
+			            console.log(json_data.rosen[0]['id']);
+			            console.log(json_data.rosen[0]['name']);
+
+			            bus_rosens = json_data.rosen;
+
+			            show_rosens();
+
+
+			        }else{
+			        	alert("Transaction error. ");
+			        }
+
+
+			        		            // 成功時処理
+		            // location.reload();
+		        },
+		        error: function() {         // HTTPエラー時
+		            alert("Server Error. Pleasy try again later. 5");
+		        }
+		    }).responseText;
+		    // console.log(result);
+
+		    return result;
+
+
+		}
+
+
+		var distance = getDistance(35.680985,139.766994,34.701903,135.494964);
+		// alert("distance : " + distance);
+
+		//距離の計算
+		function getDistance(lat1, lng1, lat2, lng2){
+
+			function radian(deg){
+				return deg * Math.PI / 180;
+			}
+			//km 単位 絶対値で返してくる
+	    	return 6378.14 * Math.acos(Math.cos(radian(lat1))*Math.cos(radian(lat2))*Math.cos(radian(lng2)-radian(lng1))+Math.sin(radian(lat1))*Math.sin(radian(lat2)));
+		}
+
+
+		function show_test(){
+			console.log("hello");
+		}
+
+
+
+		// var result = test() //ちゃんと返り値が入ってる;
+    </script>
+    <script src="js/get-current-position.js"></script>
+</head>
+<!-- <body onLoad="loadTest()"> -->
+<body>
+
+
+	<div class="container"><!----></div>
+	<div class="help hidden"><!--
+	--></div>
+	<div class="day hide"></div><div class="night hide"></div>
+
+	    <script  src="js/index.js" charset="utf-8"></script>
+
+		<dl id="result"></dl>
+
+
+
+
+
+	<div class="overlayall-sample">
+<!-- 	  <p>sample text</p>
+	  <p>sample text</p>
+ -->	  <!-- <button id="btn">時刻表示</button> -->
+	</div>
+
+
+
+
+
+</body>
+</html>
